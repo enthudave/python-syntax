@@ -63,7 +63,7 @@ endif
 
 syn keyword pythonStatement     break continue del return pass yield global assert lambda with
 syn keyword pythonStatement     raise nextgroup=pythonExClass skipwhite
-syn keyword pythonStatement     def class nextgroup=pythonFunction skipwhite
+syn keyword pythonDefine        def class nextgroup=pythonFunction skipwhite
 if s:Enabled('g:python_highlight_class_vars')
   syn keyword pythonClassVar    self cls
 endif
@@ -88,7 +88,12 @@ if s:Python2Syntax()
 else
   syn keyword pythonStatement   as nonlocal
   syn match   pythonStatement   '\v\.@<!<await>'
-  syn match   pythonFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*' display contained
+  syn match   pythonFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*' display contained nextgroup=pythonParamDef
+  syn region  pythonParamDef    start="(" end="):.*\n" contained contains=pythonParameters transparent keepend
+  syn match   pythonParameters  "[^,:]*" contained contains=pythonParam,pythonParens skipwhite
+  syn match   pythonParam       "=[^,]*" contained contains=pythonOperator,pythonBuiltin,pythonConstant,pythonStatement,pythonNumber,pythonString skipwhite
+	syn match   pythonParens      "[(|)]" contained skipwhite
+	syn match   pythonFuncCall    /[a-zA-Z_$][a-zA-Z0-9_$]*\ze(/
   syn match   pythonStatement   '\<async\s\+def\>' nextgroup=pythonFunction skipwhite
   syn match   pythonStatement   '\<async\s\+with\>'
   syn match   pythonStatement   '\<async\s\+for\>'
